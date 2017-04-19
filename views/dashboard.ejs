@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+	Andela Document Management System
+</title>
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
+	<link rel="stylesheet" type="text/css" href="test.css"/>
+</head>
+<body>
+	<div class="container">
+		<h1 id="header">Document Management System(DMS)</h1>
+		<div>
+			<div class="row">
+				<div class="col-xs-8">
+					<a href="/login" class="btn btn-success">Dashboard</a>
+				</div>
+				<div class="col-xs-2">
+					<p>Welcome lagbaja</p>
+				</div>
+				<div class="col-xs-2">
+					<a href="/">Log out</a>
+				</div>
+			</div>
+			<div class="list-group">
+				<a class="list-group-item list-group-item-primary" href="/createDocument">Create Document</a>
+				<a class="list-group-item list-group-item-info" href="/searchDocument">Search for document</a>
+			</div>
+		</div>
+		<div id="documentDisplay">
+			<p>You have not created any document. Click <a href="/createDocument">here </a>to create</p>
+		</div>
+	<p id="footer">Andela &copy 2017</p>
+	</div>
+</body>
+</html>

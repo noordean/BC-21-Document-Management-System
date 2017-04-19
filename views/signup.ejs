@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+	Andela Document Management System
+</title>
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="test.css">
+</head>
+<body>
+	<div class="container">
+		<h1 id="header">Document Management System(DMS)</h1>
+	<div id="form">
+		<form action="/register" method="post" id="registerForm">
+			<h2 id="formTitle">Sign Up</h2>
+			<p>All fields are required</p>
+			<ul>
+			<%for(var i=0;i<error.length;i++){%>
+				<li id="errorList"><%=error[i].msg%></li>
+			<%}%>
+			</ul>
+			<div class="form-group">
+				<label>Username</label>
+				<input type="text" name="username" class="form-control" value="<%=inputValues.username%>" minlength="8" id="username" required/>
+			</div>
+			<div class="form-group">
+				<label>Email</label>
+				<input type="text" name="email" class="form-control" value="<%=inputValues.email%>" required/>
+			</div>
+			<div class="form-group">
+				<label>Password</label>
+				<input type="text" name="password" class="form-control" value="<%=inputValues.password%>" minlength="8" id="password" required/>
+			</div>
+			<div class="form-group">
+				<label>Retype Password</label>
+				<input type="text" name="retypePassword" class="form-control" value="<%=inputValues.retypePassword%>"" minlength="8" required/>
+			</div>
+			<input type="submit" name="submit" value="Sign up" class="btn btn-primary"/>
+		</form>
+	</div>
+	<p id="footer">Andela &copy 2017</p>
+	</div>
+</body>
+</html>

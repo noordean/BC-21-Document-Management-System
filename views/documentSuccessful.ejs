@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+	Andela Document Management System
+</title>
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
+	<link rel="stylesheet" type="text/css" href="test.css"/>
+</head>
+<body>
+	<div class="container">
+		<h1 id="header">Document Management System(DMS)</h1>
+		<div>
+			<div class="row">
+				<div class="col-xs-8">
+					<a href="/login" class="btn btn-success">Dashboard</a>
+				</div>
+				<div class="col-xs-2">
+					<p>Welcome lagbaja</p>
+				</div>
+				<div class="col-xs-2">
+					<a href="/">Log out</a>
+				</div>
+			</div>
+
+		</div>
+		<div>
+			<div>Document Succesfully Added!</div>
+			<div>Document Details</div>
+			<ul class="group-list">
+					<li class="list-group-item">Title: <%=documentAdded.title%></li>
+					<li class="list-group-item">Link(Url): <%=documentAdded.url%></li>
+					<li class="list-group-item">Department: <%=documentAdded.department%></li>
+			</ul>
+		</div>
+	<p id="footer">Andela &copy 2017</p>
+	</div>
+</body>
+</html>

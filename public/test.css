@@ -1,0 +1,13 @@
+/*body					{background-color: blue;}*/
+#header						{padding-bottom: 50px;}
+#form						{background-color: #EEEED1;border-radius: 10px;}
+form 						{margin: 5px;}
+#formTitle					{text-align: center;}
+@media screen and (min-width: 750px){
+		#form				{width: 50%;margin: 0px auto 0px auto;}
+}
+#footer						{text-align: center;padding-top: 50px;}
+#errorList					{list-style-type: none;color: red;}
+#documentDisplay			{text-align: center;}
+.row						{margin-bottom: 2px;}
+#searchForm 				{text-align:left}
