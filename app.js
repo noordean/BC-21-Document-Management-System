@@ -2,14 +2,18 @@ var express = require("express");
 var MongoClient = require("mongodb").MongoClient;
 var bodyParser = require("body-parser");
 var validator = require("express-validator");
+var session = require("express-session");
 
 var app = express();
 app.set("view engine","ejs");				//set the template engine as embedded-javascrtipt
 app.use(express.static("public"));				//set the folder "public" for static files
 app.use(bodyParser.urlencoded({extended:true}));	//this allows capturing of form inputs
 app.use(validator());
+app.use(session({secret:"ssshhhhh"}));
 
 
+
+var sess;
 MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 
 	if(err){
@@ -38,6 +42,14 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 
 		//renders the login page(i.e the index page)
 		app.get("/",function(req,res){
+			sess = req.session;
+			if(sess.user){
+				req.session.destroy(function(err){
+					if (err){
+						throw new Error(err);
+					}
+				});
+			}
 			res.render("index.ejs",{error:"",inputValues:""});
 		});
 
@@ -111,6 +123,7 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 
 		//this handles users login
 		app.post("/login",function(req,res){
+			sess = req.session;
 			database.collection("users").find().toArray(function(err,result){
 				if(err){
 					throw new Error(err);
@@ -131,7 +144,21 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 					//this checks if the user is registered
 					else if(usersUsernames.indexOf(req.body.username)!=-1 && usersPasswords.indexOf(req.body.password)!=-1){		
 						if(usersUsernames.indexOf(req.body.username)===usersPasswords.indexOf(req.body.password)){
-							res.render("dashboard.ejs");
+							sess.user = req.body.username;
+
+							database.collection("documents").find({user:sess.user}).limit(5).toArray(function(err,result){
+								if(err){
+									throw new Error(err);
+								}
+								else{
+									if(result.length===0){
+										res.render("dashboard.ejs",{user:sess.user,query:"",message:"You have not created any document"});
+									}
+									else{
+										res.render("dashboard.ejs",{user:sess.user,query:result,message:""});
+									}
+								}
+							});
 						}
 						else{
 							res.render("indexejs",{error:"incorrect email or password",inputValues:req.body});
@@ -146,40 +173,101 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 		});
 
 		app.get("/login",function(req,res){
-			res.render("dashboard.ejs");
+			sess = req.session;
+			if(sess.user){		//if session is set, then allow database query
+				database.collection("documents").find({user:sess.user}).limit(5).toArray(function(err,result){
+					if(err){
+						throw new Error(err);
+					}
+					else{
+						if(result.length===0){
+							res.render("dashboard.ejs",{user:sess.user,query:"",message:"You have not created any document"});
+						}
+						else{
+							res.render("dashboard.ejs",{user:sess.user,query:result,message:""});
+						}
+					}
+				});
+
+			}
+			else{
+				res.redirect("/");
+			}
+		});
+
+		app.get("/logOut",function(req,res){
+			req.session.destroy(function(err){
+				if(err){
+					throw new Error(err);
+				}
+				else{
+					res.redirect("/");
+				}
+			});
 		});
 
 		app.get("/searchDocument",function(req,res){
-			res.render("searchDocument.ejs");
+			sess = req.session;
+			if(sess.user){
+				res.render("searchDocument.ejs",{user:sess.user});
+			}
+			else{
+				res.redirect("/");
+			}
 		});
 
 		app.get("/createDocument",function(req,res){
-			res.render("createDocument.ejs",{error:"",inputValues:""});
+			sess = req.session;
+			if(sess.user){
+				res.render("createDocument.ejs",{error:"",inputValues:"",user:sess.user});
+			}
+			else{
+				res.redirect("/");
+			}
 		});
 
+		//this handles creation of new document
 		app.post("/createDocument",function(req,res){
+			sess = req.session;
 			database.collection("documents").find({url:req.body.url}).toArray(function(err,result){
 				if(err){
 					throw new Error(err);
 				}
 				else{
 					if(result.length>0){
-						res.render("createDocument.ejs",{error:[{"msg":"This file has already been added, kindly search for it to avoid file duplicate"}],inputValues:req.body});
+						res.render("createDocument.ejs",{error:[{"msg":"This file has already been added, kindly search for it to avoid file duplicate"}],inputValues:req.body,user:sess.user});
 					}
 					else{
-						//trim and escape user inputs	
+						
+
+							//trim and escape user inputs	
 							req.sanitizeBody("title").trim();
 							req.sanitizeBody("title").escape();
 							req.sanitizeBody("url").trim();
+							req.sanitizeBody("keyword").trim();
 
 							//validate user inputs
 							req.checkBody("title","Title must contain only letters").notEmpty().isAlpha();
 							req.checkBody("url","A valid url address is required").notEmpty().isURL();
 							req.checkBody("department","Department can not be empty").notEmpty();
 
+							var keyword = [];
+							var keywordsArray;
+							if(req.body.keyword.length>0){
+							 	keywordsArray = req.body.keyword.split(",");
+		
+								for(var i=0;i<keywordsArray.length;i++){
+									keyword.push(keywordsArray[i].trim());
+								}
+							}
+
+							req.body.time = Date.now(); 	//add the time of creation to the body object
+							req.body.keyword = keyword ; 	//change the keyword in the request body to the new sanitized one
+							req.body.user = sess.user;
+
 							var errors = req.validationErrors();
 							if(errors.length>0){
-								res.render("createDocument.ejs",{error:errors,inputValues:req.body});
+								res.render("createDocument.ejs",{error:errors,inputValues:req.body,user:sess.user});
 							}
 							else{
 								database.collection("documents").save(req.body,function(err,result){
@@ -187,7 +275,11 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 										throw new Error(err);
 									}
 									else{
-										res.render("documentSuccessful.ejs",{documentAdded:req.body});
+										if(req.body.url.match("^http")===null){
+											req.body.url = "https://"+req.body.url;
+										}
+
+										res.render("documentSuccessful.ejs",{documentAdded:req.body,user:sess.user});
 									}
 								});
 							}
