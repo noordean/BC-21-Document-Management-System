@@ -11,3 +11,5 @@ form 						{margin: 5px;}
 #documentDisplay			{text-align: center;}
 .row						{margin-bottom: 2px;}
 #searchForm 				{text-align:left}
+#user						{color: green;font-weight: bold;}
+#confirmMsg					{text-align: center;}

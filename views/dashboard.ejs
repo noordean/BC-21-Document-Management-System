@@ -16,10 +16,10 @@
 					<a href="/login" class="btn btn-success">Dashboard</a>
 				</div>
 				<div class="col-xs-2">
-					<p>Welcome lagbaja</p>
+					<p id="user"><%=user%></p>
 				</div>
 				<div class="col-xs-2">
-					<a href="/">Log out</a>
+					<a href="/logOut">Log out</a>
 				</div>
 			</div>
 			<div class="list-group">
@@ -27,8 +27,32 @@
 				<a class="list-group-item list-group-item-info" href="/searchDocument">Search for document</a>
 			</div>
 		</div>
-		<div id="documentDisplay">
-			<p>You have not created any document. Click <a href="/createDocument">here </a>to create</p>
+		<div class="table-responsive">
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>S/N</th>
+					<th>Title</th>
+					<th>Url</th>
+					<th>Department</th>
+					<th>User</th>
+					<th>Date created</th>
+				</tr>
+			</thead>
+			<%for(var i=0;i<query.length;i++){%>
+				<tr>
+					<td><%=i+1%></td>
+					<td><%=query[i].title%></td>
+					<td><a target="_blank" href="<%=query[i].url%>"><%=query[i].url%></a></td>
+					<td><%=query[i].department%></td>			
+					<td><%=query[i].user%></td>
+					<td><%=new Date(query[i].time).toLocaleString()%></td>
+				</tr>
+			<%}%>
+		</table>
+		</div>
+		<div id="confirmMsg">
+			<p><%=message%></p>
 		</div>
 	<p id="footer">Andela &copy 2017</p>
 	</div>

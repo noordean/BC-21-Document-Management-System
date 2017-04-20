@@ -15,16 +15,15 @@
 					<a href="/login" class="btn btn-success">Dashboard</a>
 				</div>
 				<div class="col-xs-2">
-					<p>Welcome lagbaja</p>
+					<p id="user"><%=user%></p>
 				</div>
 				<div class="col-xs-2">
-					<a href="/">Log out</a>
+					<a href="/logOut">Log out</a>
 				</div>
 			</div>
 		<div id="createDocument">
 			<form action="/createDocument" method="post" class="form-horizontal">
 			<h3 id="formTitle">Create Document</h3>
-			<p>All fields are required</p>
 			<ul>
 				<% for(var i=0;i<error.length;i++){%>
 					<li id="errorList"><%=error[i].msg%></li>
@@ -39,7 +38,13 @@
 				<div class="form-group">
 					 <label class="control-label col-xs-2">Url(Link)</label>
 					 <div class="col-xs-10">
-					 	<input type="text" name="url" class="form-control" placeholder="e.g 2017-budget" value="<%=inputValues.url%>" required/>
+					 	<input type="text" name="url" class="form-control" placeholder="https://dropbox.com/noordean/file" value="<%=inputValues.url%>" required/>
+					 </div>
+				</div>
+				<div class="form-group">
+					 <label class="control-label col-xs-2">Keyword(s)</label>
+					 <div class="col-xs-10">
+					 	<input type="text" name="keyword" class="form-control" placeholder="e.g andela, bootcamp"/>
 					 </div>
 				</div>
 				<div class="form-group">
