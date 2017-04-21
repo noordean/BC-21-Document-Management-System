@@ -17,7 +17,7 @@ app.use(bodyParser.json());							//allows json transfer
 
 
 var sess;										//global declaration of session
-MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
+MongoClient.connect("mongodb://noordean:ibrahim5327@ds161190.mlab.com:61190/nurudb",function(err,database){
 
 	if (err){
 		throw new Error(err);
