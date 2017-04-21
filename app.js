@@ -25,8 +25,8 @@ MongoClient.connect("mongodb://noordean:ibrahim5327@ds161190.mlab.com:61190/nuru
 	else{
 
 		//server running at 3000
-		app.listen(3000,function(){
-			console.log("Server running at port: 3000");
+		app.listen(process.env.PORT || 3000,function(){
+			console.log("Server running on", http.address().port);
 		});
 
 		//renders the login page(i.e the index page)
