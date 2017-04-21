@@ -15,9 +15,9 @@ app.use(session({secret:"ssshhhhh"}));				//set session secret
 app.use(bodyParser.json());							//allows json transfer
 
 
-
+var url = process.env.MONGODB_URI || "mongodb://noordean:ibrahim5327@ds161190.mlab.com:61190/nurudb";
 var sess;										//global declaration of session
-MongoClient.connect("mongodb://noordean:ibrahim5327@ds161190.mlab.com:61190/nurudb",function(err,database){
+MongoClient.connect(url,function(err,database){
 
 	if (err){
 		throw new Error(err);
@@ -25,7 +25,8 @@ MongoClient.connect("mongodb://noordean:ibrahim5327@ds161190.mlab.com:61190/nuru
 	else{
 
 		//server running at 3000
-		app.listen(process.env.PORT || 3000,function(){
+		var pot = process.env.PORT || 3000;
+		app.listen(pot,function(){
 			console.log("Server running on", http.address().port);
 		});
 
