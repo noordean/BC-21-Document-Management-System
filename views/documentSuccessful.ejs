@@ -11,18 +11,17 @@
 	<div class="container">
 		<h1 id="header">Document Management System(DMS)</h1>
 		<div>
-			<div class="row">
-				<div class="col-xs-8">
-					<a href="/login" class="btn btn-success">Dashboard</a>
-				</div>
-				<div class="col-xs-2">
-					<p id="user"><%=user%></p>
-				</div>
-				<div class="col-xs-2">
-					<a href="/logOut">Log out</a>
-				</div>
-			</div>
-
+ 		<nav class="navbar navbar-inverse">
+  			<div class="container-fluid">
+    			<div class="navbar-header">
+      				<a class="navbar-brand" href="/login">Dashboard</a>
+    			</div>
+    			<ul class="nav navbar-nav">
+      				<li><a><%=user%></a></li>
+    			</ul>
+    			<a href="/logOut"><button class="btn btn-danger navbar-btn">Log out</button></a>
+  			</div>
+		</nav>
 		</div>
 		<div>
 			<div>Document Succesfully Added!</div>

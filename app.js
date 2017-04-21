@@ -3,37 +3,26 @@ var MongoClient = require("mongodb").MongoClient;
 var bodyParser = require("body-parser");
 var validator = require("express-validator");
 var session = require("express-session");
+var bcrypt = require("bcrypt");
 
 var app = express();
-app.set("view engine","ejs");				//set the template engine as embedded-javascrtipt
+var salt = bcrypt.genSaltSync(10);				//set the hash salt
+app.set("view engine","ejs");					//set the template engine as embedded-javascrtipt
 app.use(express.static("public"));				//set the folder "public" for static files
 app.use(bodyParser.urlencoded({extended:true}));	//this allows capturing of form inputs
-app.use(validator());
-app.use(session({secret:"ssshhhhh"}));
+app.use(validator());								//set express validation	
+app.use(session({secret:"ssshhhhh"}));				//set session secret
+app.use(bodyParser.json());							//allows json transfer
 
 
 
-var sess;
+var sess;										//global declaration of session
 MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 
-	if(err){
+	if (err){
 		throw new Error(err);
 	}
 	else{
-		app.get("/showUsers",function(req,res){
-			database.collection("users").find().toArray(function(err,result){
-				res.send(result);
-			});
-		});
-		app.get("/showDocuments",function(req,res){
-			database.collection("documents").find().toArray(function(err,result){
-				res.send(result);
-			});
-		});
-
-		app.get("/deleteDocuments",function(req,res){
-			database.collection("documents").remove({});
-		})
 
 		//server running at 3000
 		app.listen(3000,function(){
@@ -43,7 +32,7 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 		//renders the login page(i.e the index page)
 		app.get("/",function(req,res){
 			sess = req.session;
-			if(sess.user){
+			if(sess.user){						//if session is previously set, then destroy it
 				req.session.destroy(function(err){
 					if (err){
 						throw new Error(err);
@@ -58,15 +47,11 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 			res.render("signup.ejs",{error:"",inputValues:""});
 		});
 
-		//this handles users registration
+		/*this handles users registration
+		 *it checks if there is a record with the same username from the request body
+		 */
 		app.post("/register",function(req,res){
-			database.collection("users").find().toArray(function(err,result){
-				var usersEmails = [];							//get all the emails in the table "users"
-				var usersUsernames = [];						//get all the username in the table "users"
-				for(var i=0;i<result.length;i++){
-					usersEmails.push(result[i].email);
-					usersUsernames.push(result[i].username);			
-				}
+			database.collection("users").find({username:req.body.username}).toArray(function(err,result){
 
 				//trim and escape user inputs	
 				req.sanitizeBody("username").trim();
@@ -92,7 +77,7 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 					errors.push({"param":"password","msg":"The two passwords did not match"});		//if the passwords do not tally 
 				}
 
-				if(req.body.username.length<8 || req.body.password.length<8){					//if the username or password is too short
+				if(req.body.username.length < 8 || req.body.password.length < 8){					//if the username or password is too short
 					errors.push({"param":"username/password","msg":"Username and Password must contain atleast 8 characters"});
 				}
 
@@ -100,18 +85,18 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 				if(errors.length > 0){
 					res.render("signup.ejs",{error:errors,inputValues:req.body});
 				}
-				else if(usersEmails.indexOf(req.body.email)!=-1 || usersUsernames.indexOf(req.body.username)!=-1){
+				else if(result.length > 0){
 					res.render("signup.ejs",{error:[{"msg":"You have registered before, kindly go to login page"}],inputValues:req.body});
 				}
 				else{
+					var hashedPassword = bcrypt.hashSync(req.body.password,salt);
+					req.body.password = hashedPassword;			//replace user's password with the hashed one
 					database.collection("users").save(req.body,function(err,result){
 						if(err){
 							throw new Error(err);
 						}
 						else{
-							res.writeHead(200,{"Content-Type":"text/html"});
-							res.write("<h1>Registration Successful</h1>");
-							res.end("<a href='/'>Click here to login</a>");	
+							res.render("successfulRegistration.ejs");	
 						}
 					});
 
@@ -121,32 +106,67 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 			});
 		});
 
+		/*this handles document search
+		 *based on the request from browser
+		 */
+		app.post("/search",function(req,res){
+			if(req.body.searchTitleValue){
+				database.collection("documents").find({title:req.body.searchTitleValue}).sort({time:-1}).toArray(function(err,result){
+					if(err){
+						throw new Error(err);
+					}
+					else{
+						res.send(result);
+					}
+				});
+			}
+			if(req.body.searchDepartmentValue){
+				database.collection("documents").find({department:req.body.searchDepartmentValue}).sort({time:-1}).toArray(function(err,result){
+					if(err){
+						throw new Error(err);
+					}
+					else{
+						res.send(result);
+					}
+				});
+			}
+			if(req.body.searchKeywordValue){
+				database.collection("documents").find({keyword:req.body.searchKeywordValue[0]}).sort({time:-1}).toArray(function(err,result){
+					if(err){
+						throw new Error(err);
+					}
+					else{
+						res.send(result);
+					}
+				});
+			}
+			if(req.body.searchUsernameValue){
+				database.collection("documents").find({user:req.body.searchUsernameValue}).sort({time:-1}).toArray(function(err,result){
+					if(err){
+						throw new Error(err);
+					}
+					else{
+						res.send(result);
+					}
+				});
+			}
+
+		});
+
 		//this handles users login
 		app.post("/login",function(req,res){
 			sess = req.session;
-			database.collection("users").find().toArray(function(err,result){
+			database.collection("users").find({username:req.body.username}).toArray(function(err,result){
+
 				if(err){
 					throw new Error(err);
 				}
 				else{
-					var usersUsernames = [];		//collect usernames in the database
-					var usersPasswords = [];					//collect passwords in the database
-					for(var i=0;i<result.length;i++){
-						usersUsernames.push(result[i].username);
-						usersPasswords.push(result[i].password);			
-					}
-
-
-					if(req.body.username==="" || req.body.password===""){			//check for empty username or password
-						res.render("index.ejs",{error:"The fields can't be empty",inputValues:req.body});
-					}
-
-					//this checks if the user is registered
-					else if(usersUsernames.indexOf(req.body.username)!=-1 && usersPasswords.indexOf(req.body.password)!=-1){		
-						if(usersUsernames.indexOf(req.body.username)===usersPasswords.indexOf(req.body.password)){
+					if(result.length>0){
+						if(bcrypt.compareSync(req.body.password,result[0].password)){
 							sess.user = req.body.username;
 
-							database.collection("documents").find({user:sess.user}).limit(5).toArray(function(err,result){
+							database.collection("documents").find({user:sess.user}).sort({time:-1}).limit(5).toArray(function(err,result){
 								if(err){
 									throw new Error(err);
 								}
@@ -159,23 +179,25 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 									}
 								}
 							});
+
 						}
 						else{
-							res.render("indexejs",{error:"incorrect email or password",inputValues:req.body});
+							res.render("index.ejs",{error:"incorrect email or password",inputValues:req.body})	
 						}
 					}
 					else{
-						res.render("index.ejs",{error:"incorrect email or password",inputValues:req.body});
+						res.render("index.ejs",{error:"incorrect email or password",inputValues:req.body})
 					}
 				}
+
 			});
 
 		});
 
 		app.get("/login",function(req,res){
 			sess = req.session;
-			if(sess.user){		//if session is set, then allow database query
-				database.collection("documents").find({user:sess.user}).limit(5).toArray(function(err,result){
+			if(sess.user){						//if session is set, then query database and allow acess to dashboard
+				database.collection("documents").find({user:sess.user}).sort({time:-1}).limit(5).toArray(function(err,result){
 					if(err){
 						throw new Error(err);
 					}
@@ -206,6 +228,7 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 			});
 		});
 
+		//this render searchDocument page
 		app.get("/searchDocument",function(req,res){
 			sess = req.session;
 			if(sess.user){
@@ -224,6 +247,10 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 			else{
 				res.redirect("/");
 			}
+		});
+
+		app.get("/register",function(req,res){
+			res.redirect("/");	
 		});
 
 		//this handles creation of new document
@@ -247,7 +274,7 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 							req.sanitizeBody("keyword").trim();
 
 							//validate user inputs
-							req.checkBody("title","Title must contain only letters").notEmpty().isAlpha();
+							req.checkBody("title","Title must contain only letters").notEmpty();
 							req.checkBody("url","A valid url address is required").notEmpty().isURL();
 							req.checkBody("department","Department can not be empty").notEmpty();
 
@@ -262,7 +289,7 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 							}
 
 							req.body.time = Date.now(); 	//add the time of creation to the body object
-							req.body.keyword = keyword ; 	//change the keyword in the request body to the new sanitized one
+							req.body.keyword = keyword ; 	//change the keyword in the request body to the generated array
 							req.body.user = sess.user;
 
 							var errors = req.validationErrors();
@@ -270,14 +297,15 @@ MongoClient.connect("mongodb://localhost:27017/nurudb",function(err,database){
 								res.render("createDocument.ejs",{error:errors,inputValues:req.body,user:sess.user});
 							}
 							else{
+
+								if(req.body.url.match("^http")===null){
+									req.body.url = "https://"+req.body.url;
+									}
 								database.collection("documents").save(req.body,function(err,result){
 									if(err){
 										throw new Error(err);
 									}
 									else{
-										if(req.body.url.match("^http")===null){
-											req.body.url = "https://"+req.body.url;
-										}
 
 										res.render("documentSuccessful.ejs",{documentAdded:req.body,user:sess.user});
 									}

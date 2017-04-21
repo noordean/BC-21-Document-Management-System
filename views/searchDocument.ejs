@@ -10,17 +10,17 @@
 <body>
 	<div class="container">
 		<h1 id="header">Document Management System(DMS)</h1>
-			<div class="row">
-				<div class="col-xs-8">
-					<a href="/login" class="btn btn-success">Dashboard</a>
-				</div>
-				<div class="col-xs-2">
-					<p id="user"><%=user%></p>
-				</div>
-				<div class="col-xs-2">
-					<a href="/logOut">Log out</a>
-				</div>
-			</div>
+ 		<nav class="navbar navbar-inverse">
+  			<div class="container-fluid">
+    			<div class="navbar-header">
+      				<a class="navbar-brand" href="/login">Dashboard</a>
+    			</div>
+    			<ul class="nav navbar-nav">
+      				<li><a><%=user%></a></li>
+    			</ul>
+    			<a href="/logOut"><button class="btn btn-danger navbar-btn">Log out</button></a>
+  			</div>
+		</nav>
 		<div id="searchForm">
 			<form class="form-horizontal">
 				<div class="form-group">
@@ -30,25 +30,62 @@
 							<option>Title</option>
 							<option>Keyword</option>
 							<option>Department</option>
+							<option>Username</option>
 						</select>
 					</div>
 				</div>
 			</form>
 		</div>
 		<div id="searchMethod">
-			<form class="form-horizontal">
+			<form class="form-horizontal" id="searchDocTitle">
 				<div class="form-group">
 					 <label class="control-label col-xs-2">Title</label>
 					 <div class="col-xs-10">
-					 	<input type="text" name="titleInput" class="form-control" placeholder="e.g 2017-budget" />
+					 	<input type="text" name="titleInput" class="form-control" placeholder="e.g 2017-budget" id="searchInputTitle"/>
 					 </div>
 				</div>
 				<div class="form-group">
 					<div class="col-xs-offset-2 col-xs-10">
-						<input type="submit" name="submit" value="Search" class="btn btn-primary" />
+						<input type="submit" name="submit" value="Search" class="btn btn-primary"/>
 					</div>
 				</div>
 			</form>
+		</div>
+
+<form class="form-horizontal" id="searchDocDepartment">
+	<div class="form-group">
+		<label class="control-label col-xs-2">Department</label>
+		<div class="col-xs-10">
+			<select class="form-control" name="departmentInput" id="searchInputDepartment">
+				<option><i>Click to select department</i></option><option>Success</option><option>Learning</option><option>Operations</option>
+				<option>Finance</option><option>Recruitment</option><option>Sales</option><option>Marketing</option></select></div></div>
+				<div class="form-group">
+				<div class="col-xs-offset-2 col-xs-10">
+		<input type="submit" name="submit" value="Search" class="btn btn-primary"/></div></div>
+</form>
+
+<form class='form-horizontal' id='searchDocKeyword'>
+		<div class='form-group'>
+			<label class='control-label col-xs-2'>Keyword(s)</label>
+				 <div class='col-xs-10'>
+				 	<input type='text' name='keywordInput' class='form-control' placeholder='e.g budget,2017' id='searchInputKeyword'/></div></div>
+				<div class='form-group'>
+				<div class='col-xs-offset-2 col-xs-10'>
+				<input type='submit' name='submit' value='Search' class='btn btn-primary' id='searchDocument'/></div></div>
+</form>
+
+<form class='form-horizontal' id='searchDocUsername'>
+		<div class='form-group'>
+			<label class='control-label col-xs-2'>Username</label>
+				 <div class='col-xs-10'>
+				 	<input type='text' name='keywordInput' class='form-control' placeholder='e.g <your username>' id='searchInputUsername'/></div></div>
+				<div class='form-group'>
+				<div class='col-xs-offset-2 col-xs-10'>
+				<input type='submit' name='submit' value='Search' class='btn btn-primary' id='searchDocument'/></div></div>
+</form>
+
+		<div class="table-responsive" id="searchDisplay">
+			
 		</div>
 	<p id="footer">Andela &copy 2017</p>
 	</div>

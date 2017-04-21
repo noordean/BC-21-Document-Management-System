@@ -13,3 +13,9 @@ form 						{margin: 5px;}
 #searchForm 				{text-align:left}
 #user						{color: green;font-weight: bold;}
 #confirmMsg					{text-align: center;}
+#noResult					{text-align: center;color: red;}
+table tbody tr td 			{font-size: 12px}
+#signupredirect				{text-align: center;}
+.col-xs-2					{text-align: right;}
+.logout						{text-align: left;}
+.navbar						{background-color: #2b2c2c}
