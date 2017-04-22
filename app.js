@@ -15,7 +15,7 @@ app.use(session({secret:"ssshhhhh"}));				//set session secret
 app.use(bodyParser.json());							//allows json transfer
 
 
-var url = "mongodb://noordean:ibrahim5327@ds161190.mlab.com:61190/nurudb";
+var url = "mongodb://noordean:ibrahim5327@ds161190.mlab.com:61190/nurudb";//database url
 var sess;										//global declaration of session
 MongoClient.connect(url,function(err,database){
 
