@@ -27,7 +27,7 @@ MongoClient.connect(url,function(err,database){
 		//server running at 3000
 		var port = process.env.PORT || 3000;
 		app.listen(port,function(){
-			console.log("Server running on", http.address().port);
+			console.log("Server now running ");
 		});
 
 		//renders the login page(i.e the index page)
