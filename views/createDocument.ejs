@@ -24,12 +24,12 @@
 		</nav>
 		<div id="createDocument">
 			<form action="/createDocument" method="post" class="form-horizontal">
-			<h3 id="formTitle">Create Document</h3>
-			<ul>
-				<% for(var i=0;i<error.length;i++){%>
-					<li id="errorList"><%=error[i].msg%></li>
-				<%}%>
-			</ul>
+				<h3 id="formTitle">Create Document</h3>
+				<ul>
+					<% for(var i=0;i<error.length;i++){%>
+						<li id="errorList"><%=error[i].msg%></li>
+					<%}%>
+				</ul>
 				<div class="form-group">
 					 <label class="control-label col-xs-2">Title</label>
 					 <div class="col-xs-10">
@@ -70,7 +70,7 @@
 				</div>
 			</form>
 		</div>
-	<p id="footer">Andela &copy 2017</p>
+		<p id="footer">Andela &copy 2017</p>
 	</div>
 </body>
 </html>

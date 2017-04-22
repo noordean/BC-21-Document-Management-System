@@ -11,25 +11,25 @@
 <body>
 	<div class="container">
 		<h1 id="header">Document Management System(DMS)</h1>
-	<div id="form">
-		<form action="/login" method="post">
-			<h2 id="formTitle">Login</h2>
-			<ul>
-				<li id="errorList"><%=error%></li>
-			</ul>
-			<div class="form-group">
-				<label>Username</label>
-				<input type="text" name="username" class="form-control" value="<%=inputValues.username%>" required/>
-			</div>
-			<div class="form-group">
-				<label>Password</label>
-				<input type="password" name="password" class="form-control" value="<%=inputValues.password%>" required/>
-			</div>
-			<input type="submit" name="submit" value="Login" class="btn btn-primary" />
-		</form>
-	<p>Sign up <a href="/showSignUp">here</a> to create an account</p>
+		<div id="form">
+			<form action="/login" method="post">
+				<h2 id="formTitle">Login</h2>
+				<ul>
+					<li id="errorList"><%=error%></li>
+				</ul>
+				<div class="form-group">
+					<label>Username</label>
+					<input type="text" name="username" class="form-control" value="<%=inputValues.username%>" required/>
+				</div>
+				<div class="form-group">
+					<label>Password</label>
+					<input type="password" name="password" class="form-control" value="<%=inputValues.password%>" required/>
+				</div>
+				<input type="submit" name="submit" value="Login" class="btn btn-primary" />
+			</form>
+		<p>Sign up <a href="/showSignUp">here</a> to create an account</p>
 	</div>
-	<p id="footer">Andela &copy 2017</p>
+		<p id="footer">Andela &copy 2017</p>
 	</div>
 </body>
 </html>

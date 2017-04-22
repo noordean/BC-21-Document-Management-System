@@ -1,4 +1,6 @@
 
+
+//assigning the elements to use to variables for easy access
 var searchSelect = document.getElementById("searchSelect");
 var displayArea = document.getElementById("searchMethod");
 
@@ -20,25 +22,32 @@ searchDocKeyword.style.display = "none";
 searchDocUsername.style.display = "none";
 
 searchSelect.addEventListener("change",function(event){
-	if (event.target.value==="Keyword") {
+	//if the selected search method is "Keyword",then hide other forms
+	if (event.target.value === "Keyword") {
 		searchDocTitle.style.display = "none";
 		searchDocDepartment.style.display = "none";
 		searchDocUsername.style.display = "none";
 		searchDocKeyword.style.display = "";
 	}
 	else if (event.target.value==="Title"){
+
+	//if the selected search method is "Title", then hide other forms
 		searchDocKeyword.style.display = "none";
 		searchDocDepartment.style.display = "none";
 		searchDocUsername.style.display = "none";
 		searchDocTitle.style.display = "";
 	}
-	else if(event.target.value==="Department"){
+	else if(event.target.value === "Department"){
+
+	//if the selected search method is "Department", then hide other forms
 		searchDocTitle.style.display = "none";
 		searchDocKeyword.style.display = "none";
 		searchDocUsername.style.display = "none";
 		searchDocDepartment.style.display = "";
 	}
-	else if(event.target.value==="Username"){
+	else if(event.target.value === "Username"){
+
+	//if the selected search method "Username", then hide other forms	
 		searchDocTitle.style.display = "none";
 		searchDocKeyword.style.display = "none";
 		searchDocUsername.style.display = "";
@@ -48,7 +57,10 @@ searchSelect.addEventListener("change",function(event){
 
 
 
-//send request to the server depending on the search option selected by the user
+/*send request to the server depending on the search method selected by the user
+ *so that server would be able to recognise which form is sending request, thus knowing 
+ *which table field to query
+ */
 searchDocTitle.addEventListener("submit",function(event){
 	fetch("search",{
 		method:"post",
@@ -130,6 +142,7 @@ searchDocUsername.addEventListener("submit",function(event){
 	event.preventDefault();
 });
 
+//a function that splits the keyword entered into array, then return it 
 function getKeywords(keywordStr){
 	var keyword = [];
 	var keywordsArray = keywordStr.split(",");
@@ -140,6 +153,9 @@ function getKeywords(keywordStr){
 	return keyword;
 }
 
+/*a function that generates table for search result display,accepting the result returned 
+ *from the server as an argument
+ */
 function showSearchTable(obj){
 	var table = "<table class='table table-bordered table-hover'><thead><tr><th>S/N</th><th>Title</th><th>Url</th><th>Department</th><th>User</th><th>Date Created</th></tr></thead><tbody>";
 		for(var i=0;i<obj.length;i++){
